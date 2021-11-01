@@ -1,0 +1,29 @@
+#!/bin/sh
+
+echo "running 1 cycle of coordinate rism refinement on 1aho:"
+
+phenix.refine  \
+   non-les/4phenix_1aho.pdb 1aho.mtz \
+   c_beta_restraints=False discard_psi_phi=False \
+   refinement.input.xray_data.r_free_flags.generate=True \
+   strategy=individual_sites \
+   refinement.main.number_of_macro_cycles=1 \
+   use_amber=True \
+   amber.topology_file_name=non-les/4amber_1aho.prmtop \
+   amber.coordinate_file_name=non-les/4amber_1aho.rst7 \
+   amber.order_file_name=non-les/4amber_1aho.order \
+   print_amber_energies=True \
+   prefix=amber serial=1 \
+   write_geo=False --overwrite cdl=True > amber_rism.log 
+
+tail -3 amber_rism.log | head -2 > tail_rism.log
+./dacdif -a 0.002 non-les/tail_rism.log tail_rism.log
+status=$?
+
+if [ $status -ne 0 ]; then
+   echo "(The expected full log file is in non-les/amber_rism.log)"
+fi
+
+/bin/rm -f amber_data.mtz amber_001.* amber_002.def
+
+exit $status
