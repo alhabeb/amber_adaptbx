@@ -44,6 +44,10 @@ def get_amber_struct_object(params):
       raise AttributeError(
           'Setting amber restraint for pysander does not work with AmberTools <= 16')
 
+  # DAC: hard-wire rism inputs here for testing; later we will need to
+  #      copy these from amber_params
+  amber_structs.inp.irism = 1
+
   amber_structs.qm_inp=amber_structs.sander_engine.QmInputOptions()
   if amber_params.qmmask:
      amber_structs.inp.ifqnt=1
